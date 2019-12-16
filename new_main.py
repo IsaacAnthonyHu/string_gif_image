@@ -17,6 +17,8 @@ def image_shrinker(image):
     size = image.size
     max_size = max(size)
     shrink_ratio = max_size//100
+    if shrink_ratio == 0:
+        shrink_ratio = 1
     width = round(size[0]/shrink_ratio)
     height = round(size[1]/shrink_ratio)
 
