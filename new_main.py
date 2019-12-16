@@ -1,6 +1,38 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
+
+def image_loader(path):
+
+    try:
+        im = Image.open(path)
+        return im
+    except FileNotFoundError:
+        print("File Path Incorrect!")
+        return False
+
+
+def image_shrinker(image):
+
+    size = image.size
+    max_size = max(size)
+    shrink_ratio = max_size//100
+    width = round(size[0]/shrink_ratio)
+    height = round(size[1]/shrink_ratio)
+
+    return (width, height)
+
+def gif2frames(img):
+
+    frame = 0
+    try:
+        while True:
+            img.seek(frame)
+            yield img.convert("RGBA")
+            frame += 1
+    except EOFError:
+        print("Reach Maximum Frame!")
+
 ascii_char = list("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
 
 def get_char(r, g, b, alpha=256):  # RGBA颜色中，最后ALPHA值为透明度，0代表全透明，1表示不透明
@@ -12,39 +44,36 @@ def get_char(r, g, b, alpha=256):  # RGBA颜色中，最后ALPHA值为透明度�
 	return ascii_char[int(gray/unit)]  # 将灰度值按比例对应为灰度列表中的字符
 
 
-def frame2string(im, width, height):
+def frame2string(im):
     
     # im = Image.open(image).convert("RGBA")
     txt = ""
-    for i in range(height):
-        for j in range(width):
+    for i in range(im.size[1]):
+        for j in range(im.size[0]):
             txt += get_char(*im.getpixel((j,i)))
         txt += '\n'
     return txt
 
 
-def gif2frames(img_name):
+# def pt2px(pt):
 
-    img = Image.open(img_name)
-    # img = img.resize((img.size[0]//5, img.size[1]//5))
-    frame = 0
-    try:
-        while True:
-            img.seek(frame)
-			#img.resize((img.size[0]//10, img.size[1]//10))
-            yield (img.convert("RGBA"),img.size[0],img.size[1])
-            #yield (img.convert("RGBA"),img.size[0],img.size[1])
-            frame += 1
-    except EOFError:
-        print("Reach Maximum Frame!")
+    # px = (pt*96)/72
 
+    # return px
+def get_txt_size(text, font='square.ttf', fontsize=10):
 
-def txt2image(width, height, text):
+    im_test = Image.new("RGB", (1,1), (255,255,255))
+    dr_test = ImageDraw.Draw(im_test)
+    image_font = ImageFont.truetype(os.path.join("fonts", font), fontsize)
+    text_size = dr_test.multiline_textsize(text, font=image_font)
+    return text_size
+
+def txt2image(text, textsize, font="square.ttf", fontsize=10):
     
-    im = Image.new("RGB", (20*width, 20*height), (255, 255, 255))
+    im = Image.new("RGB", textsize, (255, 255, 255))
     dr = ImageDraw.Draw(im)
-    font = ImageFont.truetype(os.path.join("fonts", "square.ttf"), 15)
-    dr.text((0,0), text, font=font, fill="#000000")
+    image_font = ImageFont.truetype(os.path.join("fonts", font), fontsize)
+    dr.text((0,0), text, font=image_font, fill="#000000")
     return im
 
 
@@ -56,15 +85,24 @@ def images2gif(images_list):
 	im.save('output_gif/output.gif', save_all=True, append_images=images, loop=1, duration=1, comment=b"aaabb")
 
 
-def main(image_name):
+def main(image_path):
 	
-	image_object = Image.open(image_name)
-	image_size = image_object.size
-	generator = gif2frames(image_name)
-	images_list = []
-	for x in generator:
-		text = frame2string(*x)
-		img = txt2image(x[1], x[2], text)
-		images_list.append(img.resize(image_size))
-		print("One image added!")
-	images2gif(images_list)
+    img = image_loader(image_path)
+    if img:
+        shrink_size = image_shrinker(img)
+        generator = gif2frames(img)
+        images_list = []
+        for x in generator:
+            x = x.resize(shrink_size)
+            txt = frame2string(x)
+            text_size = get_txt_size(txt)
+            image_x = txt2image(txt, text_size)
+            images_list.append(image_x)
+            print("One Frame Converted!")
+        images2gif(images_list)
+    else:
+        print("Wrong File Path")
+
+if __name__ == "__main__":
+
+    main('cat.gif')
