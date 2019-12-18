@@ -107,4 +107,4 @@ def main(image_path):
 
 if __name__ == "__main__":
 
-    main('cat.gif')
+    main('tom.gif')
