@@ -35,8 +35,8 @@ def gif2frames(img):
     except EOFError:
         print("Reach Maximum Frame!")
 
-ascii_char = list("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
-
+# ascii_char = list("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
+ascii_char = list(r"""8B0$&@R2M9Z6WXNb5#3K4<>*QrSGVAEDwmeansq%1zdIUOgPH7kpoihFfxCLcuJ?Yv=T"+lt/\jy^}{;][()~:-|'`,!._ """)
 def get_char(r, g, b, alpha=256):  # RGBA颜色中，最后ALPHA值为透明度，0代表全透明，1表示不透明
 	if alpha == 0:  # 若ALPHA为0则为透明，用空白表示
 		return ' '
@@ -107,4 +107,4 @@ def main(image_path):
 
 if __name__ == "__main__":
 
-    main('tom.gif')
+    main('cat.gif')
