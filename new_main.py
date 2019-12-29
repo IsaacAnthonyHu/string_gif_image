@@ -57,11 +57,6 @@ def frame2string(im):
     return txt
 
 
-# def pt2px(pt):
-
-    # px = (pt*96)/72
-
-    # return px
 def get_txt_size(text, font='square.ttf', fontsize=10):
 
     im_test = Image.new("RGB", (1,1), (255,255,255))
