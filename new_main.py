@@ -37,6 +37,7 @@ def gif2frames(img):
 
 # ascii_char = list("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
 ascii_char = list(r"""8B0$&@R2M9Z6WXNb5#3K4<>*QrSGVAEDwmeansq%1zdIUOgPH7kpoihFfxCLcuJ?Yv=T"+lt/\jy^}{;][()~:-|'`,!._ """)
+
 def get_char(r, g, b, alpha=256):  # RGBA颜色中，最后ALPHA值为透明度，0代表全透明，1表示不透明
 	if alpha == 0:  # 若ALPHA为0则为透明，用空白表示
 		return ' '
@@ -66,7 +67,7 @@ def get_txt_size(text, font='square.ttf', fontsize=10):
     return text_size
 
 def txt2image(text, textsize, font="square.ttf", fontsize=10):
-    
+
     im = Image.new("RGB", textsize, (255, 255, 255))
     dr = ImageDraw.Draw(im)
     image_font = ImageFont.truetype(os.path.join("fonts", font), fontsize)
@@ -86,11 +87,12 @@ def main(image_path):
 	
     img = image_loader(image_path)
     if img:
-        shrink_size = image_shrinker(img)
+        # shrink_size = image_shrinker(img)
+        # shrink_size = img.size
         generator = gif2frames(img)
         images_list = []
         for x in generator:
-            x = x.resize(shrink_size)
+            # x = x.resize(shrink_size)
             txt = frame2string(x)
             text_size = get_txt_size(txt)
             image_x = txt2image(txt, text_size)
