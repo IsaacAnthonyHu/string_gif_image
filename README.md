@@ -28,4 +28,4 @@ def grayscale_convert(gs):
 vconverter = np.vectorize(grayscale_convert)
 result = vconverter(img)
 ```
-
+以我目前的水平不知道该如何改进了，目前大图的缩放是一个问题，这个项目暂时就停在这里吧，以后有机会再继续优化。
